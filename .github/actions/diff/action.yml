@@ -33,7 +33,7 @@ runs:
     - name: Run changed files script
       id: changed-files
       shell: bash
-      run: python3 src/main.py
+      run: python3 ${{ github.action_path }}/src/main.py
       # env:
       #   INPUT_FILES: ${{ inputs.files }}
       #   INPUT_FILES_SEPARATOR: ${{ inputs.files_separator }}
