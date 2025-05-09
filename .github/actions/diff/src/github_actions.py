@@ -8,7 +8,7 @@ import os
 import sys
 import json
 import uuid
-from typing import Any, Dict, List, Optional, Union, Callable, TypeVar
+from typing import Any, Callable, TypeVar, final
 
 T = TypeVar("T")
 
@@ -18,12 +18,12 @@ class AnnotationProperties:
 
     def __init__(
         self,
-        title: Optional[str] = None,
-        file: Optional[str] = None,
-        start_line: Optional[int] = None,
-        end_line: Optional[int] = None,
-        start_column: Optional[int] = None,
-        end_column: Optional[int] = None,
+        title: str | None = None,
+        file: str | None = None,
+        start_line: str | None = None,
+        end_line: str | None = None,
+        start_column: str | None = None,
+        end_column: str | None = None,
     ) -> None:
         """
         Initialize annotation properties.
@@ -36,12 +36,12 @@ class AnnotationProperties:
             start_column: The start column for the annotation
             end_column: The end column for the annotation
         """
-        self.title = title
-        self.file = file
-        self.start_line = start_line
-        self.end_line = end_line
-        self.start_column = start_column
-        self.end_column = end_column
+        self.title: str | None = title
+        self.file: str | None = file
+        self.start_line: str | None = start_line
+        self.end_line: str | None = end_line
+        self.start_column: str | None = start_column
+        self.end_column: str | None = end_column
 
 
 class InputOptions:
@@ -55,14 +55,14 @@ class InputOptions:
             required: Whether the input is required. If required and not present, will throw
             trim_whitespace: Whether leading/trailing whitespace will be trimmed for the input
         """
-        self.required = required
-        self.trim_whitespace = trim_whitespace
+        self.required: bool = required
+        self.trim_whitespace: bool = trim_whitespace
 
 
 class EnvOptions:
     """Options for getEnv."""
 
-    def __init__(self, required: bool = False, trim_whitespace: bool = True, default: Optional[str] = None) -> None:
+    def __init__(self, required: bool = False, trim_whitespace: bool = True, default: str | None = None) -> None:
         """
         Initialize environment variable options.
 
@@ -71,11 +71,12 @@ class EnvOptions:
             trim_whitespace: Whether leading/trailing whitespace will be trimmed
             default: Default value if the environment variable is not set
         """
-        self.required = required
-        self.trim_whitespace = trim_whitespace
-        self.default = default
+        self.required: bool = required
+        self.trim_whitespace: bool = trim_whitespace
+        self.default: str | None = default
 
 
+@final
 class ExitCode:
     """The code to exit an action."""
 
@@ -96,9 +97,9 @@ class Summary:
         Args:
             gh: Reference to the GitHubAction instance for accessing environment variables
         """
-        self._buffer = ""
-        self._file_path = None
-        self._gh = gh
+        self._buffer: str = ""
+        self._file_path: str | None = None
+        self._gh: GitHubAction = gh
 
     def file_path(self) -> str:
         """
@@ -123,13 +124,13 @@ class Summary:
         except IOError:
             raise IOError(
                 f"Unable to access summary file: '{path_from_env}'. "
-                "Check if the file has correct read/write permissions."
+                + "Check if the file has correct read/write permissions."
             )
 
         self._file_path = path_from_env
         return self._file_path
 
-    def _wrap(self, tag: str, content: Optional[str] = None, attrs: Optional[Dict[str, str]] = None) -> str:
+    def _wrap(self, tag: str, content: str | None = None, attrs: dict[str, str] | None = None) -> str:
         """
         Wraps content in an HTML tag.
 
@@ -149,7 +150,7 @@ class Summary:
 
         return f"<{tag}{html_attrs}>{content}</{tag}>"
 
-    def write(self, options: Optional[Dict[str, bool]] = None) -> "Summary":
+    def write(self, options: dict[str, bool] | None = None) -> "Summary":
         """
         Writes text in the buffer to the summary file and empties buffer.
 
@@ -165,7 +166,7 @@ class Summary:
         file_path = self.file_path()
 
         with open(file_path, "w" if overwrite else "a", encoding="utf-8") as f:
-            f.write(self._buffer)
+            _ = f.write(self._buffer)
 
         return self.empty_buffer()
 
@@ -229,7 +230,7 @@ class Summary:
         """
         return self.add_raw(os.linesep)
 
-    def add_code_block(self, code: str, lang: Optional[str] = None) -> "Summary":
+    def add_code_block(self, code: str, lang: str | None = None) -> "Summary":
         """
         Adds an HTML codeblock to the summary buffer.
 
@@ -247,12 +248,12 @@ class Summary:
         element = self._wrap("pre", self._wrap("code", code), attrs)
         return self.add_raw(element).add_eol()
 
-    def add_list(self, items: List[str], ordered: bool = False) -> "Summary":
+    def add_list(self, items: list[str], ordered: bool = False) -> "Summary":
         """
         Adds an HTML list to the summary buffer.
 
         Args:
-            items: List of items to render
+            items: list of items to render
             ordered: If the rendered list should be ordered or not
 
         Returns:
@@ -263,7 +264,7 @@ class Summary:
         element = self._wrap(tag, list_items)
         return self.add_raw(element).add_eol()
 
-    def add_table(self, rows: List[List[Union[Dict[str, Any], str]]]) -> "Summary":
+    def add_table(self, rows: list[list[dict[str, Any] | str]]) -> "Summary":
         """
         Adds an HTML table to the summary buffer.
 
@@ -315,7 +316,7 @@ class Summary:
         element = self._wrap("details", self._wrap("summary", label) + content)
         return self.add_raw(element).add_eol()
 
-    def add_image(self, src: str, alt: str, options: Optional[Dict[str, str]] = None) -> "Summary":
+    def add_image(self, src: str, alt: str, options: dict[str, str] | None = None) -> "Summary":
         """
         Adds an HTML image tag to the summary buffer.
 
@@ -338,7 +339,7 @@ class Summary:
         element = self._wrap("img", None, attrs)
         return self.add_raw(element).add_eol()
 
-    def add_heading(self, text: str, level: Union[int, str] = 1) -> "Summary":
+    def add_heading(self, text: str, level: int | str | None = 1) -> "Summary":
         """
         Adds an HTML section heading element.
 
@@ -376,7 +377,7 @@ class Summary:
         element = self._wrap("br", None)
         return self.add_raw(element).add_eol()
 
-    def add_quote(self, text: str, cite: Optional[str] = None) -> "Summary":
+    def add_quote(self, text: str, cite: str | None = None) -> "Summary":
         """
         Adds an HTML blockquote to the summary buffer.
 
@@ -426,7 +427,7 @@ class GitHubAction:
         """Get the summary instance."""
         return self._summary
 
-    def get_env(self, name: str, options: Optional[EnvOptions] = None) -> str:
+    def get_env(self, name: str, options: EnvOptions | None = None) -> str:
         """
         Gets the value of an environment variable.
 
@@ -497,7 +498,7 @@ class GitHubAction:
         path_value = self.get_env("PATH") or ""
         os.environ["PATH"] = f"{input_path}{os.pathsep}{path_value}"
 
-    def get_input(self, name: str, options: Optional[InputOptions] = None) -> str:
+    def get_input(self, name: str, options: InputOptions | None = None) -> str:
         """
         Gets the value of an input.
 
@@ -522,7 +523,7 @@ class GitHubAction:
             # Translate the error message to reference the input name, not the env var
             raise ValueError(f"Input required and not supplied: {name}") from e
 
-    def get_multiline_input(self, name: str, options: Optional[InputOptions] = None) -> List[str]:
+    def get_multiline_input(self, name: str, options: InputOptions | None = None) -> list[str]:
         """
         Gets the values of a multiline input.
 
@@ -531,7 +532,7 @@ class GitHubAction:
             options: Optional. See InputOptions
 
         Returns:
-            List of string values from the multiline input
+            list of string values from the multiline input
         """
         options = options or InputOptions()
         inputs = self.get_input(name, options).split("\n")
@@ -542,7 +543,7 @@ class GitHubAction:
 
         return [input_line.strip() for input_line in inputs]
 
-    def get_boolean_input(self, name: str, options: Optional[InputOptions] = None) -> bool:
+    def get_boolean_input(self, name: str, options: InputOptions | None = None) -> bool:
         """
         Gets the input value of the boolean type in the YAML 1.2 "core schema" specification.
 
@@ -567,10 +568,10 @@ class GitHubAction:
 
         raise TypeError(
             f"Input does not meet YAML 1.2 'Core Schema' specification: {name}\n"
-            "Support boolean input list: `true | True | TRUE | false | False | FALSE`"
+            + "Support boolean input list: `true | True | TRUE | false | False | FALSE`"
         )
 
-    def set_output(self, name: str, value: Any) -> None:
+    def set_output(self, name: str, value: str) -> None:
         """
         Sets the value of an output.
 
@@ -594,7 +595,7 @@ class GitHubAction:
         """
         self._issue("echo", "on" if enabled else "off")
 
-    def set_failed(self, message: Union[str, Exception]) -> None:
+    def set_failed(self, message: str | Exception) -> None:
         """
         Sets the action status to failed.
 
@@ -622,7 +623,7 @@ class GitHubAction:
         """
         self._issue_command("debug", {}, message)
 
-    def error(self, message: Union[str, Exception], properties: Optional[AnnotationProperties] = None) -> None:
+    def error(self, message: str | Exception, properties: AnnotationProperties | None = None) -> None:
         """
         Adds an error issue.
 
@@ -637,7 +638,7 @@ class GitHubAction:
             str(message) if isinstance(message, Exception) else message,
         )
 
-    def warning(self, message: Union[str, Exception], properties: Optional[AnnotationProperties] = None) -> None:
+    def warning(self, message: str | Exception, properties: AnnotationProperties | None = None) -> None:
         """
         Adds a warning issue.
 
@@ -652,7 +653,7 @@ class GitHubAction:
             str(message) if isinstance(message, Exception) else message,
         )
 
-    def notice(self, message: Union[str, Exception], properties: Optional[AnnotationProperties] = None) -> None:
+    def notice(self, message: str | Exception, properties: AnnotationProperties | None = None) -> None:
         """
         Adds a notice issue.
 
@@ -745,7 +746,7 @@ class GitHubAction:
         """
         self._issue_command(name, {}, message)
 
-    def _issue_command(self, command: str, properties: Dict[str, Any], message: Any) -> None:
+    def _issue_command(self, command: str, properties: dict[str, Any], message: Any) -> None:
         """
         Issue a command to the GitHub Actions runner.
 
@@ -791,7 +792,7 @@ class GitHubAction:
             raise FileNotFoundError(f"Missing file at path: {file_path}")
 
         with open(file_path, "a", encoding="utf-8") as f:
-            f.write(f"{self._to_command_value(message)}{os.linesep}")
+            _ = f.write(f"{self._to_command_value(message)}{os.linesep}")
 
     def _prepare_key_value_message(self, key: str, value: Any) -> str:
         """
@@ -834,7 +835,7 @@ class GitHubAction:
             return input_value
         return json.dumps(input_value)
 
-    def _to_command_properties(self, annotation_properties: AnnotationProperties) -> Dict[str, Any]:
+    def _to_command_properties(self, annotation_properties: AnnotationProperties) -> dict[str, Any]:
         """
         Convert annotation properties to command properties.
 
