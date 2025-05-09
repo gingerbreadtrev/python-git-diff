@@ -21,7 +21,7 @@ jobs:
             **/*.yml
             **/*.yaml
           base-sha: the base sha
-          token: this is my token
+          token: ${{ github.token }}
 
       - name: Print Outputs
         run: |
