@@ -14,7 +14,7 @@ inputs:
     required: false
   token:
     description: "GitHub Token"
-    required: true
+    required: false
 
 outputs:
   changed-files:

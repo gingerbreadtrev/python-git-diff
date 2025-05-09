@@ -1,12 +1,15 @@
 name: Test Changed Files
 on:
-  pull_request:
+  push:
+    branches: [main]
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -18,9 +21,10 @@ jobs:
         uses: ./.github/actions/diff/
         with:
           filters: |
-            **/*.txt
+            **/*.py
             **/*.yaml
-          token: ${{ github.token }}
+          base-sha: ${{ github.event.before }} # Before the push
+          head-sha: ${{ github.event.after }} # After the push
 
       - name: Print Outputs
         run: |

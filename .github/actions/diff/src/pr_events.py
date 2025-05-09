@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
+"""Pull request functionality for detecting changed files."""
+
 import json
 import os
 import subprocess
 from typing import TypedDict, cast
+
+from utils import FilesByStatus, filter_files_by_patterns
 
 
 class FileChange(TypedDict):
@@ -11,16 +15,6 @@ class FileChange(TypedDict):
     filename: str
     status: str
     previous_filename: str | None
-
-
-class FilesByStatus(TypedDict):
-    """Type definition for files organized by status."""
-
-    added: list[str]
-    modified: list[str]
-    removed: list[str]
-    renamed: list[dict[str, str]]
-    all: list[str]
 
 
 def get_pr_number_from_event() -> int | None:
@@ -94,23 +88,23 @@ def categorize_files(files: list[FileChange]) -> FilesByStatus:
         elif status == "removed":
             categories["removed"].append(filename)
         elif status == "renamed":
-            previous_filename = file.get("previous_filename", "")
+            previous_filename = file.get("previous_filename")
             if previous_filename:
                 categories["renamed"].append({"old": previous_filename, "new": filename})
-
-        # Add to the "all" category (only the current filename)
-        categories["all"].append(filename)
 
     return categories
 
 
-def get_pr_changed_files(token: str | None = None, pr_number: int | None = None) -> FilesByStatus | None:
+def get_pr_changed_files(
+    token: str | None = None, pr_number: int | None = None, patterns: list[str] | None = None
+) -> FilesByStatus | None:
     """
     Get and categorize changed files from the current pull request.
 
     Args:
         token: GitHub token for authentication (optional)
         pr_number: Optional PR number to override the one from context
+        patterns: list of glob patterns to filter files by
 
     Returns:
         Dictionary with files categorized by status or None on error
@@ -127,7 +121,9 @@ def get_pr_changed_files(token: str | None = None, pr_number: int | None = None)
         print(f"Retrieved {len(files)} changed files from PR #{pr_num}")
 
         # Categorize files by status
-        return categorize_files(files)
+        categorized_files = categorize_files(files)
+
+        return filter_files_by_patterns(categorized_files, patterns)
 
     except subprocess.CalledProcessError as e:
         print(f"Error executing GitHub CLI: {e}")
