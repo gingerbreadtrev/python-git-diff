@@ -14,7 +14,8 @@ jobs:
           python-version: "3.13"
 
       - name: Get Changed Files
-        uses: .github/actions/diff
+        id: changed-files
+        uses: ./.github/actions/diff/
         with:
           filters: |
             **/*.yml
@@ -27,3 +28,5 @@ jobs:
           echo "=== Action Outputs ==="
           echo "changed_files: ${{ steps.changed-files.outputs.changed_files }}"
           echo "any_changed: ${{ steps.changed-files.outputs.any_changed }}"
+          echo "${{ steps.changed-files.outputs.any_changed }} == True"
+          cat $GITHUB_OUTPUT
