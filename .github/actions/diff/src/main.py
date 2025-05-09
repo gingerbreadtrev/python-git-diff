@@ -78,6 +78,12 @@ def main() -> None:
 
         action.error(traceback.format_exc())
 
+    action.info("Debugging environment variables...")
+    import os
+
+    env_vars = {k: v for k, v in os.environ.items() if k.startswith("INPUT_") or k.startswith("GITHUB_")}
+    action.info(f"Environment variables: {env_vars}")
+
 
 if __name__ == "__main__":
     main()
