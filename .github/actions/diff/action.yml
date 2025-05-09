@@ -17,10 +17,12 @@ inputs:
     required: true
 
 outputs:
-  changed_files:
+  changed-files:
     description: "JSON containing all changed files by category"
-  any_changed:
+    value: ${{ steps.changed-files.outputs.changed-files }}
+  any-changed:
     description: "Boolean indicating if any files changed"
+    value: ${{ steps.changed-files.outputs.any-changed }}
 
 runs:
   using: "composite"

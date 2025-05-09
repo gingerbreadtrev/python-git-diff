@@ -26,7 +26,7 @@ jobs:
       - name: Print Outputs
         run: |
           echo "=== Action Outputs ==="
-          echo "changed_files: ${{ steps.changed-files.outputs.changed_files }}"
-          echo "any_changed: ${{ steps.changed-files.outputs.any_changed }}"
-          echo "${{ steps.changed-files.outputs.any_changed }} == True"
+          echo "changed_files: ${{ steps.changed-files.outputs.changed-files }}"
+          echo "any_changed: ${{ steps.changed-files.outputs.any-changed }}"
+          echo "${{ steps.changed-files.outputs.any-changed }} == True"
           cat $GITHUB_OUTPUT
