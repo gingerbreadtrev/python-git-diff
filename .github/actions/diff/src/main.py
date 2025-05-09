@@ -67,10 +67,8 @@ def main() -> None:
         action.info(f"GITHUB_OUTPUT environment variable is {'set' if github_output else 'not set'}")
 
         # Set the outputs
-        action.set_output("changed_files", "heloooooo")
-        action.info("Set output 'changed_files' to 'heloooooo'")
-
-        action.set_output("any_changed", "True")
+        action.set_output("changed-files", "heloooooo")
+        action.set_output("any-changed", "True")
         action.info("Set output 'any_changed' to 'True'")
     except Exception as e:
         action.error(f"Failed to set outputs: {e}")
