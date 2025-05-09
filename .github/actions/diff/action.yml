@@ -34,13 +34,8 @@ runs:
       id: changed-files
       shell: bash
       run: python3 ${{ github.action_path }}/src/main.py
-      # env:
-      #   INPUT_FILES: ${{ inputs.files }}
-      #   INPUT_FILES_SEPARATOR: ${{ inputs.files_separator }}
-      #   INPUT_FILES_IGNORE: ${{ inputs.files_ignore }}
-      #   INPUT_FILES_IGNORE_SEPARATOR: ${{ inputs.files_ignore_separator }}
-      #   INPUT_SEPARATOR: ${{ inputs.separator }}
-      #   INPUT_JSON: ${{ inputs.json }}
-      #   INPUT_TOKEN: ${{ inputs.token }}
-      #   GITHUB_TOKEN: ${{ inputs.token }}
-      # Passing all other inputs as environment variables
+      env:
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_FILTERS: ${{ inputs.filters }}
+        INPUT_BASE_SHA: ${{ inputs.base-sha }}
+        INPUT_HEAD_SHA: ${{ inputs.head-sha }}
