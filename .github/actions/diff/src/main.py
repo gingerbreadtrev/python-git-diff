@@ -4,7 +4,7 @@ from github_actions import GitHubAction, InputOptions
 
 
 def main() -> None:
-    action = GitHubAction
+    action = GitHubAction()
 
     token = action.get_input("token", InputOptions(required=True))
     action.info(f"got token: {token}")
