@@ -1,0 +1,46 @@
+name: "Changed Files"
+description: "Detects changed files in a PR or push"
+
+inputs:
+  filters:
+    description: "Glob patterns to filter changed files"
+    required: false
+    default: "**/*"
+  base-sha:
+    description: "Base SHA for comparison"
+    required: false
+  head-sha:
+    description: "Head SHA for comparison"
+    required: false
+  token:
+    description: "GitHub Token"
+    required: true
+
+outputs:
+  changed_files:
+    description: "JSON containing all changed files by category"
+  any_changed:
+    description: "Boolean indicating if any files changed"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.13.3
+
+    - name: Run changed files script
+      id: changed-files
+      shell: bash
+      run: python3 src/main.py
+      # env:
+      #   INPUT_FILES: ${{ inputs.files }}
+      #   INPUT_FILES_SEPARATOR: ${{ inputs.files_separator }}
+      #   INPUT_FILES_IGNORE: ${{ inputs.files_ignore }}
+      #   INPUT_FILES_IGNORE_SEPARATOR: ${{ inputs.files_ignore_separator }}
+      #   INPUT_SEPARATOR: ${{ inputs.separator }}
+      #   INPUT_JSON: ${{ inputs.json }}
+      #   INPUT_TOKEN: ${{ inputs.token }}
+      #   GITHUB_TOKEN: ${{ inputs.token }}
+      # Passing all other inputs as environment variables

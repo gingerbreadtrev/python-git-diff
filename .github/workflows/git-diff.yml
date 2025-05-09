@@ -1,0 +1,29 @@
+name: Test Changed Files
+on:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Get Changed Files
+        uses: .github/actions/diff
+        with:
+          filters: |
+            **/*.yml
+            **/*.yaml
+          base-sha: the base sha
+          token: this is my token
+
+      - name: Print Outputs
+        run: |
+          echo "=== Action Outputs ==="
+          echo "changed_files: ${{ steps.changed-files.outputs.changed_files }}"
+          echo "any_changed: ${{ steps.changed-files.outputs.any_changed }}"
