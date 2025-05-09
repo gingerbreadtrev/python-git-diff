@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from github_actions import GitHubAction, InputOptions
+from github_actions import GitHubAction, InputOptions, EnvOptions
 
 
 def main() -> None:
@@ -59,8 +59,24 @@ def main() -> None:
         action.info(f"Could not write summary table: {e}")
         action.info("This is expected if running locally or in a testing environment")
 
-    action.set_output("changed_files", "heloooooo")
-    action.set_output("any_changed", "True")
+    action.info("Setting outputs...")
+
+    try:
+        # Check if GITHUB_OUTPUT environment variable exists
+        github_output = action.get_env("GITHUB_OUTPUT", EnvOptions(required=False))
+        action.info(f"GITHUB_OUTPUT environment variable is {'set' if github_output else 'not set'}")
+
+        # Set the outputs
+        action.set_output("changed_files", "heloooooo")
+        action.info("Set output 'changed_files' to 'heloooooo'")
+
+        action.set_output("any_changed", "True")
+        action.info("Set output 'any_changed' to 'True'")
+    except Exception as e:
+        action.error(f"Failed to set outputs: {e}")
+        import traceback
+
+        action.error(traceback.format_exc())
 
 
 if __name__ == "__main__":

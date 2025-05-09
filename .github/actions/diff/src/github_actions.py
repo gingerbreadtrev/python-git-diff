@@ -512,7 +512,7 @@ class GitHubAction:
             ValueError: If the input is required and not supplied
         """
         options = options or InputOptions()
-        env_var = f"INPUT_{name.replace(' ', '_').upper()}"
+        env_var = f"INPUT_{name.replace(' ', '_').replace('-', '_').upper()}"
 
         env_options = EnvOptions(required=options.required, trim_whitespace=options.trim_whitespace)
 
