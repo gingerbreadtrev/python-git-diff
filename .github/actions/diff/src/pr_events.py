@@ -13,7 +13,7 @@ class FileChange(TypedDict):
     previous_filename: str | None
 
 
-class FilesByStatus(TypedDict):
+class ChangedFilesByStatus(TypedDict):
     """Type definition for files organized by status."""
 
     added: list[str]
@@ -70,7 +70,7 @@ def get_changed_files(pr_number: int, token: str | None = None) -> list[FileChan
     return cast(list[FileChange], json.loads(result.stdout))
 
 
-def categorize_files(files: list[FileChange]) -> FilesByStatus:
+def categorize_files(files: list[FileChange]) -> ChangedFilesByStatus:
     """
     Categorize files by their status.
 
@@ -80,7 +80,7 @@ def categorize_files(files: list[FileChange]) -> FilesByStatus:
     Returns:
         Dictionary with files categorized by status
     """
-    categories: FilesByStatus = {"added": [], "modified": [], "removed": [], "renamed": [], "all": []}
+    categories: ChangedFilesByStatus = {"added": [], "modified": [], "removed": [], "renamed": [], "all": []}
 
     for file in files:
         filename = file["filename"]
@@ -104,7 +104,7 @@ def categorize_files(files: list[FileChange]) -> FilesByStatus:
     return categories
 
 
-def get_pr_changed_files(token: str | None = None, pr_number: int | None = None) -> FilesByStatus | None:
+def get_pr_changed_files(token: str | None = None, pr_number: int | None = None) -> ChangedFilesByStatus | None:
     """
     Get and categorize changed files from the current pull request.
 

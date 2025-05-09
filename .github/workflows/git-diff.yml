@@ -18,7 +18,7 @@ jobs:
         uses: ./.github/actions/diff/
         with:
           filters: |
-            **/*.yml
+            **/*.txt
             **/*.yaml
           base-sha: the base sha
           token: ${{ github.token }}
