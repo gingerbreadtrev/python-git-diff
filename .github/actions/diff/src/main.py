@@ -2,11 +2,12 @@
 
 import json
 import os
-import subprocess
-from typing import Dict, List, Optional, TypedDict, Any
+
+# import subprocess
+from typing import List, Optional, TypedDict
 
 from github_actions import GitHubAction, InputOptions
-from .pr_events import get_pr_changed_files, FilesByStatus, FileChange
+from pr_events import get_pr_changed_files, FilesByStatus
 
 
 class PullRequestOutput(TypedDict):
