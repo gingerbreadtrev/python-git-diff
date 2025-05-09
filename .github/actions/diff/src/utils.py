@@ -69,9 +69,9 @@ def filter_files_by_patterns(files: FilesByStatus, patterns: list[str]) -> Files
     # Filter renamed files
     for renamed_item in files["renamed"]:
         if renamed_item["old"] not in filtered["removed"]:
-            filtered["removed"].extend(filter_paths_with_patterns([renamed_item], patterns))
+            filtered["removed"].extend(filter_paths_with_patterns([renamed_item["old"]], patterns))
 
         if renamed_item["new"] not in filtered["added"]:
-            filtered["added"].extend(filter_paths_with_patterns([renamed_item], patterns))
+            filtered["added"].extend(filter_paths_with_patterns([renamed_item["new"]], patterns))
 
     return filtered
