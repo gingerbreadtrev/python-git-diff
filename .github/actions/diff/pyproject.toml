@@ -1,0 +1,79 @@
+[project]
+name = "changed-files-action"
+version = "1.0.0"
+description = "GitHub Action for detecting changed files in PRs and pushes"
+readme = "README.md"
+requires-python = ">=3.13"
+
+
+[project.optional-dependencies]
+dev = [
+    # Development dependencies
+    "pytest==7.4.0",
+    "pytest-mock==3.11.1",
+    "pytest-cov==4.1.0",
+    "basedpyright==1.6.1",
+    "ruff==0.1.3",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["src/tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "--cov=src --cov-report=term --cov-report=xml --cov-report=html"
+
+[tool.pyright]
+# Basic pyright configuration
+pythonVersion = "3.9"
+include = ["src"]
+exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+]
+# Type checking settings
+typeCheckingMode = "recommended"
+reportMissingImports = true
+reportMissingTypeStubs = false
+reportUnknownMemberType = false
+reportUnknownParameterType = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+reportPrivateImportUsage = false
+# These are too strict for most projects
+reportIncompatibleMethodOverride = false
+reportIncompatibleVariableOverride = false
+# To allow using # type: ignore
+useLibraryCodeForTypes = true
+
+[tool.ruff]
+# Enable Pyflakes and PyCodeStyle
+select = ["E", "F"]
+# Python version to target
+target-version = "py39"
+# Line length
+line-length = 100
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.per-file-ignores]
+"src/tests/*" = ["E501"]  # Ignore line length in tests
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["src/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "pass",
+    "raise ImportError",
+    "if TYPE_CHECKING:",
+]
