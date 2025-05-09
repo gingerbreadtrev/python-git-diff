@@ -96,7 +96,7 @@ def main() -> None:
     action = GitHubAction()
 
     # Get inputs
-    token = action.get_input("token", InputOptions(required=True))
+    token = action.get_input("token", InputOptions(required=False))
     action.info("GitHub token received")
 
     # Get filters if provided
