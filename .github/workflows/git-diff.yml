@@ -29,3 +29,4 @@ jobs:
           echo "changed_files: ${{ steps.changed-files.outputs.changed_files }}"
           echo "any_changed: ${{ steps.changed-files.outputs.any_changed }}"
           echo "${{ steps.changed-files.outputs.any_changed }} == True"
+          cat $GITHUB_OUTPUT
